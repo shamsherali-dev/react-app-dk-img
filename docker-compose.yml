@@ -1,0 +1,6 @@
+services:
+  app:
+    image: api          # <--- This tells Docker to use your already-built image named "api"
+    restart: unless-stopped 
+    ports: 
+      - "5173:5173"
