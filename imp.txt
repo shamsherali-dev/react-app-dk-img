@@ -15,3 +15,31 @@ services:
     restart: unless-stopped 
     ports: 
       - "5173:5173"
+
+
+for production app ::
+# Stage 1: Build the React application
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve with Nginx for production
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+
+
+for docker-compse.yml :
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: react-production-app
+    ports:
+      - "80:80"
+    restart: always
